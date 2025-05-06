@@ -1,0 +1,28 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environment folders
+venv/
+hsp_env/
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# VS Code settings
+.vscode/
+
+# HuggingFace cache
+~/.cache/huggingface/
+huggingface/
+
+# Output files
+*.csv
+*.json
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
