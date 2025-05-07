@@ -7,7 +7,8 @@ if torch.backends.mps.is_available():
     torch.mps.empty_cache()
 
 # Load Qwen model
-model_id = "Qwen/Qwen2.5-7B"
+# model_id = "Qwen/Qwen2.5-7B"
+model_id = "Qwen/Qwen2.5-14B"
 # model_id = "Qwen/Qwen3-0.6B"
 tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
 model = AutoModelForCausalLM.from_pretrained(model_id, trust_remote_code=True)
@@ -34,8 +35,8 @@ def transform_prompt(prompt: str, instruction: str) -> str:
 \nOriginal prompt: {prompt}
 Transformed prompt:"""
 
-    print("\n=== Prompt Sent to LLM ===")
-    print(full_prompt)
+    # print("\n=== Prompt Sent to LLM ===")
+    # print(full_prompt)
 
     response = llm(full_prompt)[0]['generated_text']
 
@@ -48,26 +49,44 @@ Transformed prompt:"""
     else:
         transformed = response.strip()
 
-    print("\n=== Extracted Transformed Prompt ===")
-    print(transformed)
-    print("=" * 50 + "\n")
+    # print("\n=== Extracted Transformed Prompt ===")
+    # print(transformed)
+    # print("=" * 50 + "\n")
 
     return transformed
 
-def run_batch_transform(input_csv="data/prompts.csv", output_csv="data/transformed_prompts_cut.csv"):
+def run_batch_transform(input_csv="data/prompts.csv", output_csv="data/transformed_prompts.csv"):
     df = pd.read_csv(input_csv)
 
     instructions = {
         "synonyms": "Replace some content words in the original prompt with their SYNONYMS i.e. words with the same meaning but different spelling. "
         "Keep the same amount of words in transformed prompt. "
-        "EXCLUDE all the explanations - return only the transformed original prompt. "
+        "Remove all the quotation marks! "
+        "If no alternatives found orr empy result, return the original prompt. "
+        "DO NOT provode any explanations - return only the transformed original prompt!!! "
         "\nELAMPLE: "
         "\nOriginal prompt: A cat on a mat "
         "\nTransformed prompt: A feline resting on a rug "
         "\nNOW YOUR RESULT: ",
-        
-        # "neutral_add": "Add polite or neutral quality-enhancing phrases (e.g. 'high quality', 'please', etc.) to the prompt.",
-        # "word_reorder": "Slightly reorder the words in the prompt while keeping the meaning the same.",
+
+        "neutral_add": "Add polite or neutral quality-enhancing phrases e.g. 'high quality', 'please', AND similar to the original prompt. "
+        "Keep the similar amount of words in transformed prompt. "
+        "Remove all the quotation marks! "
+        "If no alternatives found orr empy result, return the original prompt. "
+        "DO NOT provode any explanations - return only the transformed original prompt!!! "
+        "\nELAMPLE: "
+        "\nOriginal prompt: A cat on a mat. "
+        "\nTransformed prompt: A cat on a mat, high quality. "
+        "\nNOW YOUR RESULT: ",
+
+        "word_reorder": "Slightly reorder the words in the prompt while keeping the meaning the same."
+        "Keep the similar amount of words in transformed prompt. "
+        "Remove all the quotation marks! "
+        "If no alternatives found orr empy result, return the original prompt. "
+        "DO NOT provode any explanations - return only the transformed original prompt!!! "
+        "\nELAMPLE: "
+        "\nOriginal prompt: A cat on a mat. "
+        "\nTransformed prompt: On a mat sits a cat. ",
     }
 
     for name, instr in instructions.items():

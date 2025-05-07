@@ -19,7 +19,7 @@ hsp_env/
 huggingface/
 
 # Output files
-*.csv
+
 *.json
 *.log
 
